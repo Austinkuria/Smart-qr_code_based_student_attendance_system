@@ -1,106 +1,61 @@
 import 'package:flutter/material.dart';
+// import '../models/user.dart';
 
-class DashboardAdmin extends StatelessWidget {
+class DashboardAdmin extends StatefulWidget {
   const DashboardAdmin({super.key});
+
+  @override
+  DashboardAdminState createState() => DashboardAdminState();
+}
+
+class DashboardAdminState extends State<DashboardAdmin> {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Admin Dashboard'),
-        backgroundColor: Colors.deepPurple,
+        title: Text('Admin Dashboard'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () {
+              // Navigate back to the login screen
+              Navigator.pushReplacementNamed(context, '/');
+            },
+          ),
+        ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Welcome Section
-            const Text(
-              'Welcome, Admin!',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ElevatedButton.icon(
+              icon: Icon(Icons.person_add),
+              label: Text('Manage Lecturers'),
+              onPressed: () {
+                // Navigate to the manage lecturers screen
+                Navigator.pushNamed(context, '/manage_lecturers');
+              },
             ),
-            const SizedBox(height: 20),
-
-            // Dashboard Options
-            const Text(
-              'Manage System',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            SizedBox(height: 20),
+            ElevatedButton.icon(
+              icon: Icon(Icons.person_add_alt_1),
+              label: Text('Manage Students'),
+              onPressed: () {
+                // Navigate to the manage students screen
+                Navigator.pushNamed(context, '/manage_students');
+              },
             ),
-            const SizedBox(height: 10),
-
-            GridView(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-              ),
-              children: [
-                _buildDashboardCard(
-                  context,
-                  icon: Icons.group,
-                  label: 'Manage Students',
-                  onTap: () {
-                    print('Manage Students Pressed');
-                  },
-                ),
-                _buildDashboardCard(
-                  context,
-                  icon: Icons.class_,
-                  label: 'Manage Classes',
-                  onTap: () {
-                    print('Manage Classes Pressed');
-                  },
-                ),
-                _buildDashboardCard(
-                  context,
-                  icon: Icons.people,
-                  label: 'Manage Lecturers',
-                  onTap: () {
-                    print('Manage Lecturers Pressed');
-                  },
-                ),
-                _buildDashboardCard(
-                  context,
-                  icon: Icons.analytics,
-                  label: 'View Reports',
-                  onTap: () {
-                    print('View Reports Pressed');
-                  },
-                ),
-              ],
+            SizedBox(height: 20),
+            ElevatedButton.icon(
+              icon: Icon(Icons.analytics),
+              label: Text('View Attendance Reports'),
+              onPressed: () {
+                // Navigate to the attendance reports screen
+                Navigator.pushNamed(context, '/attendance_reports');
+              },
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDashboardCard(BuildContext context,
-      {required IconData icon, required String label, required VoidCallback onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Card(
-        elevation: 3,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 40, color: Colors.deepPurple),
-              const SizedBox(height: 10),
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-              ),
-            ],
-          ),
         ),
       ),
     );
