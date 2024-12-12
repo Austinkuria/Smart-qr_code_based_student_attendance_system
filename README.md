@@ -1,4 +1,4 @@
-# qr_attendance_system
+smart-qr_code_based_attendance_system
 
 A new Flutter project.
 
