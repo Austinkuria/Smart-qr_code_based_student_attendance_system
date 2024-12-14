@@ -12,7 +12,6 @@ import 'models/system_setting.dart';
 import 'services/hive_service.dart';
 import 'app_routes.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();

@@ -15,36 +15,47 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   final UserService _userService = UserService(); // Use UserService to fetch user
 
-  void _login() async {
-  String username = _usernameController.text.trim();
-  String password = _passwordController.text.trim();
+  final FocusNode _usernameFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
 
-  bool isAuthenticated = await _userService.authenticateUser(username, password);
-
-  if (isAuthenticated) {
-    // Fetch the user from Hive
-    UserModel? user = await UserService.getUser(username);
-    if (user != null) {
-      // Navigate to the correct dashboard based on the role
-      switch (user.role) {
-        case 'admin':
-          Navigator.pushReplacementNamed(context, '/dashboard_admin');
-          break;
-        case 'lecturer':
-          Navigator.pushReplacementNamed(context, '/dashboard_lecturer');
-          break;
-        case 'student':
-          Navigator.pushReplacementNamed(context, '/student_dashboard');
-          break;
-        default:
-          _showError('Invalid user role');
-      }
-    }
-  } else {
-    _showError('Incorrect username or password');
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    _usernameFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    super.dispose();
   }
-}
 
+  void _login() async {
+    String username = _usernameController.text.trim();
+    String password = _passwordController.text.trim();
+
+    bool isAuthenticated = await _userService.authenticateUser(username, password);
+
+    if (isAuthenticated) {
+      // Fetch the user from Hive
+      UserModel? user = await UserService.getUser(username);
+      if (user != null) {
+        // Navigate to the correct dashboard based on the role
+        switch (user.role) {
+          case 'admin':
+            Navigator.pushReplacementNamed(context, '/dashboard_admin');
+            break;
+          case 'lecturer':
+            Navigator.pushReplacementNamed(context, '/dashboard_lecturer');
+            break;
+          case 'student':
+            Navigator.pushReplacementNamed(context, '/student_dashboard');
+            break;
+          default:
+            _showError('Invalid user role');
+        }
+      }
+    } else {
+      _showError('Incorrect username or password');
+    }
+  }
 
   void _showError(String message) {
     // Display error message to the user
@@ -73,10 +84,12 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             TextField(
               controller: _usernameController,
+              focusNode: _usernameFocusNode,
               decoration: const InputDecoration(labelText: 'Username'),
             ),
             TextField(
               controller: _passwordController,
+              focusNode: _passwordFocusNode,
               decoration: const InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
