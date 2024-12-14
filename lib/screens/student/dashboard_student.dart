@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
-class DashboardLecturer extends StatelessWidget {
-  const DashboardLecturer({super.key});
+class DashboardStudent extends StatelessWidget {
+  final Logger logger = Logger();
+  DashboardStudent({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lecturer Dashboard'),
-        backgroundColor: Colors.teal,
+        title: const Text('Student Dashboard'),
+        backgroundColor: Colors.blueAccent,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -17,14 +19,37 @@ class DashboardLecturer extends StatelessWidget {
           children: [
             // Welcome Section
             const Text(
-              'Welcome, Lecturer!',
+              'Welcome, Student!',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+
+            // Profile Section
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: ListTile(
+                leading: const CircleAvatar(
+                  backgroundImage: AssetImage('assets/student_avatar.png'), // Placeholder for profile image
+                ),
+                title: const Text('John Doe'),
+                subtitle: const Text('ID: 123456'),
+                trailing: IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () {
+                    Logger().i('Edit Profile Pressed');
+                    logger.i('Edit Profile Pressed');
+                  },
+                ),
+              ),
             ),
             const SizedBox(height: 20),
 
             // Dashboard Options
             const Text(
-              'Classroom Tools',
+              'Dashboard Options',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
@@ -40,10 +65,11 @@ class DashboardLecturer extends StatelessWidget {
               children: [
                 _buildDashboardCard(
                   context,
-                  icon: Icons.qr_code,
-                  label: 'Generate QR Code',
+                  icon: Icons.qr_code_scanner,
+                  label: 'Scan Attendance',
                   onTap: () {
-                    print('Generate QR Code Pressed');
+                    Logger().i('Scan Attendance Pressed');
+                    logger.i('Scan Attendance Pressed');
                   },
                 ),
                 _buildDashboardCard(
@@ -51,15 +77,8 @@ class DashboardLecturer extends StatelessWidget {
                   icon: Icons.history,
                   label: 'Attendance Records',
                   onTap: () {
-                    print('Attendance Records Pressed');
-                  },
-                ),
-                _buildDashboardCard(
-                  context,
-                  icon: Icons.class_,
-                  label: 'Manage Classes',
-                  onTap: () {
-                    print('Manage Classes Pressed');
+                    Logger().i('Attendance Records Pressed');
+                    logger.i('Attendance Records Pressed');
                   },
                 ),
                 _buildDashboardCard(
@@ -67,7 +86,17 @@ class DashboardLecturer extends StatelessWidget {
                   icon: Icons.settings,
                   label: 'Settings',
                   onTap: () {
-                    print('Settings Pressed');
+                    Logger().i('Settings Pressed');
+                    logger.i('Settings Pressed');
+                  },
+                ),
+                _buildDashboardCard(
+                  context,
+                  icon: Icons.help_outline,
+                  label: 'Help',
+                  onTap: () {
+                    Logger().i('Help Pressed');
+                    logger.i('Help Pressed');
                   },
                 ),
               ],
@@ -78,6 +107,7 @@ class DashboardLecturer extends StatelessWidget {
     );
   }
 
+  // Helper method to build dashboard cards
   Widget _buildDashboardCard(BuildContext context,
       {required IconData icon, required String label, required VoidCallback onTap}) {
     return GestureDetector(
@@ -92,7 +122,7 @@ class DashboardLecturer extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 40, color: Colors.teal),
+              Icon(icon, size: 40, color: Colors.blueAccent),
               const SizedBox(height: 10),
               Text(
                 label,

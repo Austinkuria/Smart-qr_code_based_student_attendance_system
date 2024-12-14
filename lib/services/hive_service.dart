@@ -1,45 +1,90 @@
-// lib/services/hive_service.dart
-
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import '../models/class.dart';
+import '../models/feedback.dart';
+import '../models/notification.dart';
+import '../models/session.dart';
+import '../models/qr_code.dart';
+import '../models/system_setting.dart';
+import '../models/audit_log.dart';
+import '../models/attendance.dart';
 import '../models/user.dart';
-import '../utils/security_utils.dart';
+import '../utils/security_utils.dart'; // Import SecurityUtils
 
 class HiveService {
-  static const String userBoxName = 'users';
-
-  Future<Box<UserModel>> _openUserBox() async {
-    return await Hive.openBox<UserModel>(userBoxName);
+  static Future<void> initializeHive() async {
+    await Hive.initFlutter();
+    Hive.registerAdapter(ClassAdapter());
+    Hive.registerAdapter(FeedbackAdapter());
+    Hive.registerAdapter(NotificationAdapter());
+    Hive.registerAdapter(SessionAdapter());
+    Hive.registerAdapter(QRCodeAdapter());
+    Hive.registerAdapter(SystemSettingAdapter());
+    Hive.registerAdapter(AuditLogModelAdapter());
+    Hive.registerAdapter(AttendanceModelAdapter());
+    Hive.registerAdapter(UserModelAdapter());
   }
 
-  Future<UserModel?> getUser(String username) async {
-    var box = await _openUserBox();
-    return box.get(username);
+  Future<Box<Class>> openClassBox() async {
+    return await Hive.openBox<Class>('classes');
   }
 
-  Future<void> addUser(UserModel user) async {
-    var box = await _openUserBox();
-    await box.put(user.username, user);
+  Future<Box<Feedback>> openFeedbackBox() async {
+    return await Hive.openBox<Feedback>('feedback');
   }
+
+  Future<Box<Notification>> openNotificationBox() async {
+    return await Hive.openBox<Notification>('notifications');
+  }
+
+  Future<Box<Session>> openSessionBox() async {
+    return await Hive.openBox<Session>('sessions');
+  }
+
+  Future<Box<QRCode>> openQRCodeBox() async {
+    return await Hive.openBox<QRCode>('qrcodes');
+  }
+
+  Future<Box<SystemSetting>> openSystemSettingBox() async {
+    return await Hive.openBox<SystemSetting>('systemSettings');
+  }
+
+  Future<Box<AuditLogModel>> openAuditLogBox() async {
+    return await Hive.openBox<AuditLogModel>('auditLogs');
+  }
+
+  Future<Box<AttendanceModel>> openAttendanceBox() async {
+    return await Hive.openBox<AttendanceModel>('attendance');
+  }
+
+  static Future<Box<UserModel>> openUserBox() async {
+      return await Hive.openBox<UserModel>('users');
+    }
 
   Future<void> initializeUsers() async {
-    var box = await _openUserBox();
-    if (box.isEmpty) {
-      // Add initial admin user
-      await addUser(UserModel(
+    var userBox = await Hive.openBox<UserModel>('users');
+    if (userBox.isEmpty) {
+      await userBox.add(UserModel(
+        userId: 'admin',
+        name: 'Admin User',
+        email: 'admin@example.com',
         username: 'admin',
-        passwordHash: SecurityUtils.hashPassword('admin123'),
+        passwordHash: SecurityUtils.hashPassword('admin123'), // Hash password before saving
         role: 'admin',
       ));
-      // Add initial lecturer user
-      await addUser(UserModel(
+      await userBox.add(UserModel(
+        userId: 'lecturer1',
+        name: 'Lecturer One',
+        email: 'lecturer1@example.com',
         username: 'lecturer1',
-        passwordHash: SecurityUtils.hashPassword('lecturer123'),
+        passwordHash: SecurityUtils.hashPassword('lecturer123'), // Hash password before saving
         role: 'lecturer',
       ));
-      // Add initial student user
-      await addUser(UserModel(
+      await userBox.add(UserModel(
+        userId: 'student1',
+        name: 'Student One',
+        email: 'student1@example.com',
         username: 'student1',
-        passwordHash: SecurityUtils.hashPassword('student123'),
+        passwordHash: SecurityUtils.hashPassword('student123'), // Hash password before saving
         role: 'student',
       ));
     }

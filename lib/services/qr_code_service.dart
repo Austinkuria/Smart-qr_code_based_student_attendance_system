@@ -1,27 +1,29 @@
-// import 'package:logger/logger.dart';
-// import 'package:qr_flutter/qr_flutter.dart';
-// import 'package:flutter/material.dart';
-// import 'package:qr_code_scanner/qr_code_scanner.dart';
+import '../services/hive_service.dart';
+import '../models/qr_code.dart';
 
-// class QRCodeService {
-//   static final Logger logger = Logger();
 
-//   static Future<String?> scanQRCode(QRViewController controller) async {
-//     try {
-//       final scanData = await controller.scannedDataStream.first;
-//       return scanData.code;  // Return scanned data (studentId, sessionId, etc.)
-//     } catch (e) {
-//       logger.e('Error scanning QR code: $e');
-//       return null;
-//     }
-//   }
+class QRCodeService {
+  static Future<void> generateQRCode(String sessionId, String qrCodeData) async {
+    final hiveService = HiveService();
+    final box = await hiveService.openQRCodeBox();
+    final qrCode = QRCode(
+      qrCodeId: DateTime.now().millisecondsSinceEpoch.toString(),
+      sessionId: sessionId,
+      qrCodeData: qrCodeData,
+      timestamp: DateTime.now(),
+    );
+    await box.add(qrCode);
+  }
 
-//   static Widget generateQRCode(String data) {
-//     // Logic to generate QR code from data
-//     return QrImage(
-//       data: data,
-//       version: QrVersions.auto,
-//       size: 200.0,
-//     );
-//   }
-// }
+  static Future<List<QRCode>> getQRCodeBySession(String sessionId) async {
+    final hiveService = HiveService();
+    final box = await hiveService.openQRCodeBox();
+    return box.values.where((qrCode) => qrCode.sessionId == sessionId).toList();
+  }
+
+  static Future<void> deleteQRCode(String qrCodeId) async {
+    final hiveService = HiveService();
+    final box = await hiveService.openQRCodeBox();
+    await box.delete(qrCodeId);
+  }
+}

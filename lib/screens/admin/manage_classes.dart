@@ -6,10 +6,10 @@ class ManageClassesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Manage Classes'),
+        title: Text('Manage Students'),
       ),
       body: Center(
-        child: Text('Class management functionality goes here'),
+        child: Text('Student management functionality will be implemented here.'),
       ),
     );
   }

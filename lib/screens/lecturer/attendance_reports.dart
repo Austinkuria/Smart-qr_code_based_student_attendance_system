@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class AttendanceReportsScreen extends StatelessWidget {
   const AttendanceReportsScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -10,7 +9,7 @@ class AttendanceReportsScreen extends StatelessWidget {
         title: Text('Attendance Reports'),
       ),
       body: Center(
-        child: Text('Attendance reports functionality goes here'),
+        child: Text('Attendance reports functionality will be implemented here.'),
       ),
     );
   }
