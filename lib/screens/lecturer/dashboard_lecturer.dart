@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+
 class DashboardLecturer extends StatelessWidget {
   const DashboardLecturer({super.key});
 
@@ -13,7 +14,7 @@ class DashboardLecturer extends StatelessWidget {
             icon: const Icon(Icons.notifications),
             onPressed: () {
               // Navigate to Notifications Screen
-              Navigator.pushNamed(context, '/notifications');
+              Navigator.pushNamed(context, '/notifications_screen');
             },
             tooltip: 'Notifications',
           ),
@@ -21,6 +22,7 @@ class DashboardLecturer extends StatelessWidget {
             icon: const Icon(Icons.logout),
             onPressed: () {
               // Handle logout
+              Navigator.pushNamed(context, '/logout');
             },
             tooltip: 'Logout',
           ),
@@ -51,7 +53,7 @@ class DashboardLecturer extends StatelessWidget {
                   label: 'My Classes',
                   color: Colors.blue,
                   onTap: () {
-                    Navigator.pushNamed(context, '/my_classes');
+                    Navigator.pushNamed(context, '/manage_classes');
                   },
                 ),
                 ActionCard(
@@ -59,7 +61,7 @@ class DashboardLecturer extends StatelessWidget {
                   label: 'View Attendance',
                   color: Colors.green,
                   onTap: () {
-                    Navigator.pushNamed(context, '/view_attendance');
+                    Navigator.pushNamed(context, '/attendance_reports');
                   },
                 ),
                 ActionCard(
@@ -75,7 +77,7 @@ class DashboardLecturer extends StatelessWidget {
                   label: 'Settings',
                   color: Colors.grey,
                   onTap: () {
-                    Navigator.pushNamed(context, '/settings');
+                    Navigator.pushNamed(context, '/settings_screen');
                   },
                 ),
                 ActionCard(
@@ -87,11 +89,11 @@ class DashboardLecturer extends StatelessWidget {
                   },
                 ),
                 ActionCard(
-                  icon: Icons.help_outline,
-                  label: 'Help & Support',
+                  icon: Icons.feedback_outlined,
+                  label: 'Feedback',
                   color: Colors.teal,
                   onTap: () {
-                    Navigator.pushNamed(context, '/help_support');
+                    Navigator.pushNamed(context, '/student_feedback');
                   },
                 ),
               ],
@@ -106,7 +108,7 @@ class DashboardLecturer extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Handle FAB action, e.g., adding a new class
-          Navigator.pushNamed(context, '/add_class');
+          Navigator.pushNamed(context, '/schedule_class');
         },
         backgroundColor: Colors.blue,
         tooltip: 'Add Class',

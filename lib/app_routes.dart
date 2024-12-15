@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
 // Admin Screens
 import 'screens/admin/attendance_reports.dart';
@@ -13,15 +14,15 @@ import 'screens/admin/system_notifications.dart';
 import 'screens/admin/user_activity_monitor.dart';
 
 // Common Screens
-import 'screens/common/change_password_screen.dart';
-import 'screens/common/forgot_password_screen.dart';
-import 'screens/common/help_center_screen.dart';
+// import 'screens/common/change_password_screen.dart';
+// import 'screens/common/forgot_password_screen.dart';
+// import 'screens/common/help_center_screen.dart';
 import 'screens/common/login_screen.dart';
-import 'screens/common/notifications_screen.dart' as common_notifications;
-import 'screens/common/settings_screen.dart' as common_settings;
-import 'screens/common/splash_screen.dart';
-import 'screens/common/terms_conditions_screen.dart';
-import 'screens/common/update_profile_screen.dart';
+// import 'screens/common/notifications_screen.dart' as common_notifications;
+// import 'screens/common/settings_screen.dart' as common_settings;
+// import 'screens/common/splash_screen.dart';
+// import 'screens/common/terms_conditions_screen.dart';
+// import 'screens/common/update_profile_screen.dart';
 
 // Lecturer Screens
 import 'screens/lecturer/attendance_reports.dart' as lecturer_reports;
@@ -48,36 +49,54 @@ import 'screens/student/settings_screen.dart' as student_settings;
 import 'screens/error/error_page.dart';
 import 'screens/error/not_found_page.dart';
 
+
+
 class AppRoutes {
   static const splashScreen = '/';
 
-  static Route<dynamic> generateRoute(RouteSettings settings, String userRole) {
-    Map<String, WidgetBuilder> commonRoutes = {
-      '/': (context) => const SplashScreen(),
-      '/login': (context) => const LoginScreen(),
-      '/change_password': (context) => const ChangePasswordScreen(),
-      '/forgot_password': (context) => const ForgotPasswordScreen(),
-      '/help_center': (context) => const HelpCenterScreen(),
-      '/notifications': (context) => const common_notifications.NotificationsScreen(),
-      '/settings_screen': (context) => const common_settings.SettingsScreen(),
-      '/terms_conditions': (context) => const TermsConditionsScreen(),
-      '/update_profile': (context) => const UpdateProfileScreen(),
-      '/error': (context) => const ErrorPage(errorMessage: 'An unexpected error occurred.'),
-      '/not_found': (context) => const NotFoundPage(),
-    };
+  // This is the main route generator
+  static Route<dynamic> generateRoute(RouteSettings settings) {
+    // Fetch the user role from Hive or other local storage
+    return MaterialPageRoute(
+      builder: (context) {
+        return FutureBuilder<String>(
+          future: _getUserRoleFromStorage(), // Fetch role after login
+          builder: (context, snapshot) {
+            // If role is still loading, show a loading screen
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            }
 
-    Map<String, WidgetBuilder> roleRoutes = getRoleRoutes(userRole);
+            // Handle error in fetching role
+            if (snapshot.hasError) {
+              return const ErrorPage(errorMessage: 'Error fetching role.');
+            }
 
-    final allRoutes = {...commonRoutes, ...roleRoutes};
+            // Now that we have the user role, handle route generation
+            String userRole = snapshot.data ?? 'student'; // Default to 'student' if no role found
 
-    return MaterialPageRoute(builder: (context) {
-      WidgetBuilder builder = allRoutes[settings.name] ?? (context) => const NotFoundPage();
-      return builder(context);
-    });
+            // Get the role-specific routes based on the fetched role
+            Map<String, WidgetBuilder> roleRoutes = getRoleRoutes(userRole);
 
+            // Return the route based on the settings name, or fall back to a NotFound page if undefined
+            final WidgetBuilder builder = roleRoutes[settings.name] ?? (context) => const NotFoundPage();
+            return builder(context);
+          },
+        );
+      },
+    );
   }
 
+  // Method to fetch the user role from Hive or other persistent storage
+  static Future<String> _getUserRoleFromStorage() async {
+    var box = await Hive.openBox('userData');
+    return box.get('role', defaultValue: 'student') ?? 'student'; // Default to 'student' if no role found
+  }
+
+    // Generate role-specific routes
   static Map<String, WidgetBuilder> getRoleRoutes(String role) {
+    debugPrint('getRoleRoutes: Role = $role'); // Debugging the role value
+
     switch (role) {
       case 'admin':
         return {
@@ -102,6 +121,7 @@ class AppRoutes {
           '/student_feedback': (context) => const StudentFeedbackScreen(),
           '/lecturer_notifications': (context) => const lecturer_notifications.NotificationsScreen(),
           '/settings_screen': (context) => const lecturer_settings.SettingsScreen(),
+          '/logout': (context) => const LoginScreen(),
         };
       case 'student':
         return {
@@ -116,7 +136,10 @@ class AppRoutes {
           '/settings_screen': (context) => const student_settings.SettingsScreen(),
         };
       default:
-        return {};
+        // Return empty map if role doesn't match, could also return a NotFound route here
+        return {
+          '/error': (context) => const ErrorPage(errorMessage: 'Invalid user role detected.'),
+        };
     }
   }
 }

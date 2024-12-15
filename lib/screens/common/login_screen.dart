@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../services/user_service.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:logger/logger.dart'; // Initialize logger
-import '../../models/user.dart';
+import '../../services/user_service.dart'; 
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,90 +12,66 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  final UserService _userService = UserService(); // Use UserService to fetch user
-  final Logger _logger = Logger(); // Initialize logger
-
-  final FocusNode _usernameFocusNode = FocusNode();
-  final FocusNode _passwordFocusNode = FocusNode();
-
-  final String _nextRoute = ''; // Variable to store the next route
+  final UserService _userService = UserService(); // Your custom service
 
   @override
   void dispose() {
     _usernameController.dispose();
     _passwordController.dispose();
-    _usernameFocusNode.dispose();
-    _passwordFocusNode.dispose();
     super.dispose();
   }
 
-  // In login_screen.dart
+  Future<void> _login() async {
+    String username = _usernameController.text.trim();
+    String password = _passwordController.text.trim();
 
-void _login() async {
-  String username = _usernameController.text.trim();
-  String password = _passwordController.text.trim();
+    // Authenticate user
+    bool isAuthenticated = await _userService.authenticateUser(username, password);
 
-  // Log attempt
-  _logger.i('Attempting login with username: $username');
+    if (!mounted) return; // Ensure widget is mounted before using context
 
-  // Authenticate user
-  bool isAuthenticated = await _userService.authenticateUser(username, password);
-
-  if (!mounted) return;  // Ensure widget is mounted before using context
-
-  if (isAuthenticated) {
-    _logger.i('User authenticated successfully');
-    
-    // Navigate to the appropriate dashboard
-    _navigateBasedOnRole(username);
-  } else {
-    _showError('Incorrect username or password');
-  }
-}
-
-void _navigateBasedOnRole(String username) async {
-  // Fetch user data from Hive
-  UserModel? user = await UserService.getUser(username);
-  if (user != null) {
-    var box = await Hive.openBox('userBox');
-    await box.put('role', user.role);
-    String route = _getRouteForRole(user.role);
-
-    // Log the route being navigated to
-    _logger.i('Navigating to route: $route');
-
-    // Navigate only if widget is still mounted
-    if (mounted) {
-      Future.delayed(Duration(milliseconds: 500), () {
-        if (mounted) {
-          Navigator.pushReplacementNamed(context, route);
-        }
-      });
+    if (isAuthenticated) {
+      // After successful authentication, store the role
+      var user = await UserService.getUser(username); // Assuming getUser fetches user data
+      if (user != null) {
+        var box = await Hive.openBox('userData');
+        await box.put('role', user.role); // Store role after successful login
+      }
+      // Navigate based on the stored role
+      _navigateBasedOnRole();
+    } else {
+      // Handle authentication error
+      _showError('Incorrect username or password');
     }
-  } else {
-    _showError('User not found');
   }
-}
 
-String _getRouteForRole(String role) {
-  return {
-    'admin': '/dashboard_admin',
-    'lecturer': '/dashboard_lecturer',
-    'student': '/student_dashboard',
-  }[role] ?? '/not_found'; // Default to /not_found if role is unknown
-}
+  Future<void> _navigateBasedOnRole() async {
+    var box = await Hive.openBox('userData');
+    String role = box.get('role', defaultValue: 'lecturer'); // Default role if none is found
+
+    // Navigate based on role
+    if (!mounted) return; // Ensure widget is mounted before using context
+    if (role == 'admin') {
+      Navigator.pushReplacementNamed(context, '/dashboard_admin');
+    } else if (role == 'lecturer') {
+      Navigator.pushReplacementNamed(context, '/dashboard_lecturer');
+    } else if (role == 'student') {
+      Navigator.pushReplacementNamed(context, '/student_dashboard');
+    } else {
+      Navigator.pushReplacementNamed(context, '/error');
+    }
+  }
 
   void _showError(String message) {
-    // Display error message to the user
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Login Error'),
+        title: const Text('Login Error'),
         content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('OK'),
+            child: const Text('OK'),
           ),
         ],
       ),
@@ -106,36 +80,34 @@ String _getRouteForRole(String role) {
 
   @override
   Widget build(BuildContext context) {
-    // Check if the route is set and navigate to it after the widget is built
-    if (_nextRoute.isNotEmpty) {
-      // Delay the navigation to ensure the widget is mounted and context is valid
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          Navigator.pushReplacementNamed(context, _nextRoute);
-        }
-      });
-    }
-
     return Scaffold(
       appBar: AppBar(title: const Text('Login')),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
               controller: _usernameController,
-              focusNode: _usernameFocusNode,
               decoration: const InputDecoration(labelText: 'Username'),
             ),
             TextField(
               controller: _passwordController,
-              focusNode: _passwordFocusNode,
               decoration: const InputDecoration(labelText: 'Password'),
-              obscureText: true,
+                obscureText: true,
+              ),
+              const Padding(
+                padding: EdgeInsets.only(top: 20.0),
             ),
-            const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _login,
+              onPressed: _login, // Login when button is pressed
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 32.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+              ),
               child: const Text('Login'),
             ),
           ],

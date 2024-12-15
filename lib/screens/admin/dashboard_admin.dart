@@ -20,6 +20,7 @@ class DashboardAdmin extends StatelessWidget {
             icon: const Icon(Icons.logout),
             onPressed: () {
               // Handle logout
+              Navigator.pushNamed(context, '/login');
             },
           ),
         ],
@@ -91,7 +92,7 @@ class DashboardAdmin extends StatelessWidget {
                   label: 'Settings',
                   color: Colors.grey,
                   onTap: () {
-                    Navigator.pushNamed(context, '/settings');
+                    Navigator.pushNamed(context, '/settings_screen');
                   },
                 ),
                 ActionCard(
@@ -103,11 +104,11 @@ class DashboardAdmin extends StatelessWidget {
                   },
                 ),
                 ActionCard(
-                  icon: Icons.help,
-                  label: 'Help & Support',
+                  icon: Icons.restaurant_outlined,
+                  label: 'Audit Logs',
                   color: Colors.red,
                   onTap: () {
-                    Navigator.pushNamed(context, '/help_support_screen');
+                    Navigator.pushNamed(context, '/audit_logs_screen');
                   },
                 ),
               ],
