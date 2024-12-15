@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import '../common/login_screen.dart';
+import '../common/login_screen.dart'; // Import the LoginScreen
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
+
   @override
   SplashScreenState createState() => SplashScreenState();
 }
@@ -16,7 +17,7 @@ class SplashScreenState extends State<SplashScreen> {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => LoginScreen()), 
+          MaterialPageRoute(builder: (context) => const LoginScreen()), 
         );
       }
     });
@@ -30,19 +31,23 @@ class SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(
+            const Icon(
               Icons.school,
               size: 100.0,
               color: Colors.white,
             ),
-            SizedBox(height: 20),
-            Text(
-              'QR Attendance System',
+            const SizedBox(height: 20),
+            const Text(
+              'Welcome to Smart Code QR Attendance System',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
               ),
+            ),
+            const SizedBox(height: 20),
+            const CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
             ),
           ],
         ),

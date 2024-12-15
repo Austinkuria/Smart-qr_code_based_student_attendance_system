@@ -70,11 +70,11 @@ class AppRoutes {
 
     final allRoutes = {...commonRoutes, ...roleRoutes};
 
-    if (allRoutes.containsKey(settings.name)) {
-      return MaterialPageRoute(builder: (context) => allRoutes[settings.name]!(context));
-    } else {
-      return MaterialPageRoute(builder: (context) => const NotFoundPage());
-    }
+    return MaterialPageRoute(builder: (context) {
+      WidgetBuilder builder = allRoutes[settings.name] ?? (context) => const NotFoundPage();
+      return builder(context);
+    });
+
   }
 
   static Map<String, WidgetBuilder> getRoleRoutes(String role) {
@@ -120,4 +120,3 @@ class AppRoutes {
     }
   }
 }
-

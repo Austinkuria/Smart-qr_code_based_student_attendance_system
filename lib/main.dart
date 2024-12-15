@@ -1,35 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'models/user.dart';
-import 'models/attendance.dart';
-import 'models/class.dart';
-import 'models/feedback.dart';
-import 'models/audit_log.dart';
-import 'models/notification.dart';
-import 'models/qr_code.dart';
-import 'models/session.dart';
-import 'models/system_setting.dart';
-import 'services/hive_service.dart';
+import 'services/hive_service.dart'; // Import HiveService
 import 'app_routes.dart';
+// import 'screens/error/not_found_page.dart'; // Import ErrorScreen
+import 'screens/common/splash_screen.dart'; // Import SplashScreen
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Hive and register adapters
   await Hive.initFlutter();
+  await HiveService.initializeHive();
+  await HiveService().initializeUsers();
 
-  // Register Hive adapters for new models
-  Hive.registerAdapter(UserModelAdapter());
-  Hive.registerAdapter(AttendanceModelAdapter());
-  Hive.registerAdapter(ClassAdapter());
-  Hive.registerAdapter(FeedbackAdapter());
-  Hive.registerAdapter(AuditLogModelAdapter());
-  Hive.registerAdapter(NotificationAdapter());
-  Hive.registerAdapter(QRCodeAdapter());
-  Hive.registerAdapter(SessionAdapter());
-  Hive.registerAdapter(SystemSettingAdapter());
-
-  // Initialize user data
-  var hiveService = HiveService();
-  await hiveService.initializeUsers();
+  // Open userData box to fetch the role and other data
+  await Hive.openBox('userData');
 
   runApp(const MyApp());
 }
@@ -38,38 +23,60 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   Future<String> getUserRole() async {
-    // Retrieve the user role from local storage or user session
     var box = await Hive.openBox('userData');
-    return box.get('role', defaultValue: 'student'); // Default to 'student'
+    String role = box.get('role', defaultValue: 'student'); // Default to 'student'
+    debugPrint('Retrieved user role: $role');
+    return role;
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<String>(
-      future: getUserRole(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator(); // Show loading while fetching role
-        }
+    return MaterialApp(
+      title: 'Smart QR Code Attendance System',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: FutureBuilder<String>(
+        future: getUserRole(), // Fetch role asynchronously
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const SplashScreen(); // Show loading screen while fetching role
+          }
 
-        if (snapshot.hasData) {
-          String userRole = snapshot.data!;
-          return MaterialApp(
-            title: 'QR Attendance System',
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
-            ),
-            initialRoute: AppRoutes.splashScreen,
-            onGenerateRoute: (settings) => AppRoutes.generateRoute(settings, userRole),
-          );
-        } else {
-          return const Scaffold(
-            body: Center(
-              child: Text('Failed to load user role'),
-            ),
-          );
-        }
-      },
+          if (snapshot.hasError) {
+            return const ErrorScreen(); // Handle error if any
+          }
+
+          if (snapshot.hasData) {
+            String role = snapshot.data ?? 'student'; // Default to 'student' if no data
+            return MaterialApp(
+              title: 'Smart QR Code Attendance System',
+              theme: ThemeData(
+                primarySwatch: Colors.blue,
+              ),
+              onGenerateRoute: (RouteSettings settings) {
+                return AppRoutes.generateRoute(settings, role); // Pass role for routing
+              },
+              home: const SplashScreen(), // Use this if you need an initial screen
+            );
+          } else {
+            return const ErrorScreen(); // Fallback if no data available
+          }
+        },
+      ),
+    );
+  }
+}
+
+class ErrorScreen extends StatelessWidget {
+  const ErrorScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Text('Failed to load user role'), // Handle error here
+      ),
     );
   }
 }
