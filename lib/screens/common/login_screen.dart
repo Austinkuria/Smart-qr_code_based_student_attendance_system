@@ -12,7 +12,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  final UserService _userService = UserService(); // Your custom service
+  final UserService _userService = UserService(); 
 
   @override
   void dispose() {

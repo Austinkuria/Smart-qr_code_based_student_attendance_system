@@ -26,7 +26,8 @@ dependencies:
   provider: ^6.0.0
   fl_chart: ^0.69.2
   intl: ^0.17.0
-
+  pwa_install: ^0.0.5
+  flutter_web_qrcode_scanner: ^1.1.1
 
 dev_dependencies:
   flutter_test:

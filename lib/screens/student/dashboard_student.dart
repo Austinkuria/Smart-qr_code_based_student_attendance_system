@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'scan_attendance_screen.dart'; 
 
 class DashboardStudent extends StatelessWidget {
   final Logger logger = Logger();
+
   DashboardStudent({super.key});
 
   @override
@@ -39,7 +41,6 @@ class DashboardStudent extends StatelessWidget {
                 trailing: IconButton(
                   icon: const Icon(Icons.edit),
                   onPressed: () {
-                    Logger().i('Edit Profile Pressed');
                     logger.i('Edit Profile Pressed');
                   },
                 ),
@@ -68,8 +69,11 @@ class DashboardStudent extends StatelessWidget {
                   icon: Icons.qr_code_scanner,
                   label: 'Scan Attendance',
                   onTap: () {
-                    Logger().i('Scan Attendance Pressed');
-                    logger.i('Scan Attendance Pressed');
+                    logger.i('Navigating to Scan Attendance Screen');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ScanAttendanceScreen()),
+                    );
                   },
                 ),
                 _buildDashboardCard(
@@ -77,8 +81,8 @@ class DashboardStudent extends StatelessWidget {
                   icon: Icons.history,
                   label: 'Attendance Records',
                   onTap: () {
-                    Logger().i('Attendance Records Pressed');
-                    logger.i('Attendance Records Pressed');
+                    logger.i('Navigating to Attendance Records Screen');
+                    // Add your navigation logic here
                   },
                 ),
                 _buildDashboardCard(
@@ -86,8 +90,8 @@ class DashboardStudent extends StatelessWidget {
                   icon: Icons.settings,
                   label: 'Settings',
                   onTap: () {
-                    Logger().i('Settings Pressed');
-                    logger.i('Settings Pressed');
+                    logger.i('Navigating to Settings Screen');
+                    // Add your navigation logic here
                   },
                 ),
                 _buildDashboardCard(
@@ -95,8 +99,8 @@ class DashboardStudent extends StatelessWidget {
                   icon: Icons.help_outline,
                   label: 'Help',
                   onTap: () {
-                    Logger().i('Help Pressed');
-                    logger.i('Help Pressed');
+                    logger.i('Navigating to Help Screen');
+                    // Add your navigation logic here
                   },
                 ),
               ],

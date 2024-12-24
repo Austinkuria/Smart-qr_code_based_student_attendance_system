@@ -6,7 +6,7 @@ class ManageClassesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Manage Students'),
+        title: Text('Manage Classes'),
       ),
       body: Center(
         child: Text('Student management functionality will be implemented here.'),
