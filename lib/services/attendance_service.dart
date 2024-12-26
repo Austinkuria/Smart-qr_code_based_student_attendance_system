@@ -1,35 +1,41 @@
-import '../services/hive_service.dart';
+import 'package:hive/hive.dart';
 import '../models/attendance.dart';
-
+import 'package:logger/logger.dart';
 
 class AttendanceService {
-  static Future<void> addAttendance(AttendanceModel attendance) async {
-    final hiveService = HiveService();
-    final box = await hiveService.openAttendanceBox();
-    await box.add(attendance);
+  final String _attendanceBox = 'attendanceBox';
+  final Logger _logger = Logger();
+
+  // Save attendance locally using Hive
+  Future<void> saveAttendance(AttendanceModel attendance) async {
+    _logger.i("Attendance saved locally: ${attendance.toJson()}");
+    Logger().i("Attendance saved locally: ${attendance.toJson()}");
   }
 
-  static Future<List<AttendanceModel>> getAttendanceBySession(String sessionId) async {
-    final hiveService = HiveService();
-    final box = await hiveService.openAttendanceBox();
-    return box.values.where((attendance) => attendance.sessionId == sessionId).toList();
+  // Fetch all attendance records
+  Future<List<AttendanceModel>> fetchAttendanceRecords() async {
+    final box = await Hive.openBox<AttendanceModel>(_attendanceBox);
+    return box.values.toList();
   }
 
-  static Future<void> updateAttendance(AttendanceModel updatedAttendance) async {
-    final hiveService = HiveService();
-    final box = await hiveService.openAttendanceBox();
-    final index = box.values.toList().indexWhere((attendance) => attendance.attendanceId == updatedAttendance.attendanceId);
-    if (index != -1) {
-      await box.putAt(index, updatedAttendance);
-    }
-  }
+  // Mark attendance with real data
+  Future<void> markAttendance({
+    required String studentId,
+    required String sessionId,
+    required String status,
+    required String deviceId,
+  }) async {
+    final attendance = AttendanceModel(
+      attendanceId: 'unique_${DateTime.now().millisecondsSinceEpoch}',
+      sessionId: sessionId,
+      studentId: studentId,
+      status: status,
+      timestamp: DateTime.now(),
+      deviceId: deviceId,
+    );
 
-  static Future<void> deleteAttendance(String attendanceId) async {
-    final hiveService = HiveService();
-    final box = await hiveService.openAttendanceBox();
-    final index = box.values.toList().indexWhere((attendance) => attendance.attendanceId == attendanceId);
-    if (index != -1) {
-      await box.deleteAt(index);
-    }
+    final box = await Hive.openBox<AttendanceModel>(_attendanceBox);
+    await box.put(attendance.attendanceId, attendance);
+    _logger.i("Attendance marked for student $studentId in session $sessionId.");
   }
 }

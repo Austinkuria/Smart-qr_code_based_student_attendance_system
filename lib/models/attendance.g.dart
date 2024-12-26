@@ -23,14 +23,13 @@ class AttendanceModelAdapter extends TypeAdapter<AttendanceModel> {
       status: fields[3] as String,
       timestamp: fields[4] as DateTime,
       deviceId: fields[5] as String?,
-      location: fields[6] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, AttendanceModel obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.attendanceId)
       ..writeByte(1)
@@ -42,9 +41,7 @@ class AttendanceModelAdapter extends TypeAdapter<AttendanceModel> {
       ..writeByte(4)
       ..write(obj.timestamp)
       ..writeByte(5)
-      ..write(obj.deviceId)
-      ..writeByte(6)
-      ..write(obj.location);
+      ..write(obj.deviceId);
   }
 
   @override

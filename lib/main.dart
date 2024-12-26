@@ -18,10 +18,10 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-final String role;
+  final String role;
 
-const MyApp({super.key, required this.role});
-  
+  const MyApp({super.key, required this.role});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

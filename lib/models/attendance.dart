@@ -22,9 +22,6 @@ class AttendanceModel extends HiveObject {
   @HiveField(5)
   final String? deviceId; // Optional device ID
 
-  @HiveField(6)
-  final String? location; // Optional location
-
   AttendanceModel({
     required this.attendanceId,
     required this.sessionId,
@@ -32,7 +29,6 @@ class AttendanceModel extends HiveObject {
     required this.status,
     required this.timestamp,
     this.deviceId,
-    this.location,
   });
 
   Map<String, dynamic> toJson() {
@@ -43,7 +39,6 @@ class AttendanceModel extends HiveObject {
       'status': status,
       'timestamp': timestamp.toIso8601String(),
       'deviceId': deviceId,
-      'location': location,
     };
   }
 
@@ -55,7 +50,6 @@ class AttendanceModel extends HiveObject {
       status: json['status'],
       timestamp: DateTime.parse(json['timestamp']),
       deviceId: json['deviceId'],
-      location: json['location'],
     );
   }
 }

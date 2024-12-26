@@ -13,7 +13,6 @@ class DashboardLecturer extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.notifications),
             onPressed: () {
-              // Navigate to Notifications Screen
               Navigator.pushNamed(context, '/notifications_screen');
             },
             tooltip: 'Notifications',
@@ -21,7 +20,6 @@ class DashboardLecturer extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
-              // Handle logout
               Navigator.pushNamed(context, '/logout');
             },
             tooltip: 'Logout',
@@ -65,6 +63,14 @@ class DashboardLecturer extends StatelessWidget {
                   },
                 ),
                 ActionCard(
+                  icon: Icons.qr_code,
+                  label: 'Generate QR Code',
+                  color: Colors.purple,
+                  onTap: () {
+                    Navigator.pushNamed(context, '/generate_qr_code_screen');
+                  },
+                ),
+                ActionCard(
                   icon: Icons.person,
                   label: 'Update Profile',
                   color: Colors.orange,
@@ -88,26 +94,17 @@ class DashboardLecturer extends StatelessWidget {
                     Navigator.pushNamed(context, '/notifications');
                   },
                 ),
-                ActionCard(
-                  icon: Icons.feedback_outlined,
-                  label: 'Feedback',
-                  color: Colors.teal,
-                  onTap: () {
-                    Navigator.pushNamed(context, '/student_feedback');
-                  },
-                ),
               ],
             ),
             const SizedBox(height: 30),
 
             // Recent Activities Section
-            const RecentActivities(),
+            RecentActivities(),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Handle FAB action, e.g., adding a new class
           Navigator.pushNamed(context, '/schedule_class');
         },
         backgroundColor: Colors.blue,
@@ -118,130 +115,57 @@ class DashboardLecturer extends StatelessWidget {
   }
 }
 
-class ActionCard extends StatefulWidget {
+class ActionCard extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color color;
   final VoidCallback onTap;
 
   const ActionCard({
+    super.key,
     required this.icon,
     required this.label,
     required this.color,
     required this.onTap,
-    super.key,
   });
 
   @override
-  State<ActionCard> createState() => _ActionCardState();
-}
-
-class _ActionCardState extends State<ActionCard> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 200),
-      vsync: this,
-    );
-    _animation = Tween<double>(begin: 1.0, end: 1.05).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return ScaleTransition(
-      scale: _animation,
+    return GestureDetector(
+      onTap: onTap,
       child: Card(
-        elevation: 4.0,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-        child: InkWell(
-          onTap: () {
-            widget.onTap();
-          },
-          borderRadius: BorderRadius.circular(15.0),
-          onTapDown: (_) {
-            _controller.forward();
-          },
-          onTapUp: (_) {
-            _controller.reverse();
-          },
-          onTapCancel: () {
-            _controller.reverse();
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(widget.icon, size: 50.0, color: widget.color),
-                const SizedBox(height: 15.0),
-                Text(
-                  widget.label,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                      color: widget.color),
-                ),
-              ],
+        color: color,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 40, color: Colors.white),
+            const SizedBox(height: 10),
+            Text(
+              label,
+              style: const TextStyle(color: Colors.white, fontSize: 16),
+              textAlign: TextAlign.center,
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 }
 
-
 class RecentActivities extends StatelessWidget {
   const RecentActivities({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Sample recent activities data
-    final List<String> activities = [
-      'Added a new class: Physics 101',
-      'Updated attendance for Chemistry 201',
-      'Enrolled new student: Alice Johnson',
-      'Edited profile information',
-      'Scheduled office hours for Mathematics 301',
-    ];
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
+      children: const [
+        Text(
           'Recent Activities',
-          style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 10),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: activities.length,
-          itemBuilder: (context, index) {
-            return Card(
-              margin: const EdgeInsets.symmetric(vertical: 5.0),
-              child: ListTile(
-                leading: const Icon(Icons.check_circle, color: Colors.green),
-                title: Text(activities[index]),
-                trailing: const Icon(Icons.more_horiz),
-              ),
-            );
-          },
-        ),
+        SizedBox(height: 10),
+        // Add your recent activities widgets here
       ],
     );
   }

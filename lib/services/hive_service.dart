@@ -57,8 +57,8 @@ class HiveService {
   }
 
   static Future<Box<UserModel>> openUserBox() async {
-      return await Hive.openBox<UserModel>('users');
-    }
+    return await Hive.openBox<UserModel>('users');
+  }
 
   Future<void> initializeUsers() async {
     var userBox = await Hive.openBox<UserModel>('users');
@@ -88,5 +88,11 @@ class HiveService {
         role: 'student',
       ));
     }
+  }
+
+  // Save QRCode object to Hive
+  Future<void> saveQRCode(QRCode qrCode) async {
+    var qrCodeBox = await openQRCodeBox(); // Open the QRCode box
+    await qrCodeBox.put(qrCode.qrCodeId, qrCode); // Save the QRCode object with its ID as the key
   }
 }

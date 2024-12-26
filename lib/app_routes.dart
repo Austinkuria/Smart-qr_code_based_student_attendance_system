@@ -31,6 +31,7 @@ import 'screens/lecturer/dashboard_lecturer.dart';
 import 'screens/lecturer/manage_classes.dart';
 import 'screens/lecturer/notifications_screen.dart' as lecturer_notifications;
 import 'screens/lecturer/schedule_class.dart';
+import 'screens/lecturer/generate_qr_code_screen.dart';
 import 'screens/lecturer/settings_screen.dart' as lecturer_settings;
 import 'screens/lecturer/student_feedback_screen.dart';
 
@@ -118,6 +119,7 @@ class AppRoutes {
           '/class_attendance_summary': (context) => const ClassAttendanceSummaryScreen(),
           '/manage_classes': (context) => const ManageClassesScreen(),
           '/schedule_class': (context) => const ScheduleClass(),
+          '/generate_qr_code_screen': (context) => const GenerateQRCodeScreen(),
           '/student_feedback': (context) => const StudentFeedbackScreen(),
           '/lecturer_notifications': (context) => const lecturer_notifications.NotificationsScreen(),
           '/settings_screen': (context) => const lecturer_settings.SettingsScreen(),
