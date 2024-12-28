@@ -34,17 +34,11 @@ class _ScanAttendanceScreenState extends State<ScanAttendanceScreen> {
       final deviceInfo = DeviceInfoPlugin();
       if (Theme.of(context).platform == TargetPlatform.android) {
         final androidInfo = await deviceInfo.androidInfo;
-        return androidInfo.id; 
+        return androidInfo.id;
       } else if (Theme.of(context).platform == TargetPlatform.iOS) {
         final iosInfo = await deviceInfo.iosInfo;
         return iosInfo.identifierForVendor ?? 'UnknownDevice';
-      } else if (Theme.of(context).platform == TargetPlatform.fuchsia ||
-          Theme.of(context).platform == TargetPlatform.linux ||
-          Theme.of(context).platform == TargetPlatform.macOS ||
-          Theme.of(context).platform == TargetPlatform.windows) {
-        return 'DesktopDevice';
       } else {
-        // Web fallback
         return 'WebDevice_${DateTime.now().millisecondsSinceEpoch}';
       }
     } catch (error) {
@@ -56,17 +50,13 @@ class _ScanAttendanceScreenState extends State<ScanAttendanceScreen> {
   Future<void> _handleScan(String qrData) async {
     try {
       logger.i('QR Code Scanned: $qrData');
-      
-      // Extract session and student IDs
+
       final sessionId = _extractSessionId(qrData);
       final studentId = _extractStudentId(qrData);
-      
-      // Get device ID
       final deviceId = await _getDeviceId();
 
-      if (!mounted) return; // Check if widget is still mounted
+      if (!mounted) return;
 
-      // Mark attendance
       await AttendanceService().markAttendance(
         studentId: studentId,
         sessionId: sessionId,
@@ -128,34 +118,61 @@ class _ScanAttendanceScreenState extends State<ScanAttendanceScreen> {
         title: const Text('Scan Attendance'),
         backgroundColor: Colors.blueAccent,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-            flex: 4,
-            child: FlutterWebQrcodeScanner(
-              cameraDirection: CameraDirection.back,
-              onGetResult: _handleScan,
-              stopOnFirstResult: true,
-              onError: (error) {
-                logger.e('QR Code Scanner Error: ${error.message}');
-                setState(() {
-                  isScanning = false;
-                  isError = true;
-                });
-              },
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
+              ),
+              child: IntrinsicHeight(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: AspectRatio(
+                        aspectRatio: 16 / 9,
+                        child: Container(
+                          color: Colors.black,
+                          child: FlutterWebQrcodeScanner(
+                            cameraDirection: CameraDirection.back,
+                            onGetResult: _handleScan,
+                            stopOnFirstResult: true,
+                            onError: (error) {
+                              logger.e('QR Code Scanner Error: ${error.message}');
+                              setState(() {
+                                isScanning = false;
+                                isError = true;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (isScanning)
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: CircularProgressIndicator(),
+                      ),
+                    if (isError)
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'An error occurred while scanning. Please try again.',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ElevatedButton(
+                      onPressed: _resetScanner,
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-          if (isError)
-            const Text(
-              'An error occurred while scanning. Please try again.',
-              style: TextStyle(color: Colors.red),
-            ),
-          ElevatedButton(
-            onPressed: _resetScanner,
-            child: const Text('Retry'),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
