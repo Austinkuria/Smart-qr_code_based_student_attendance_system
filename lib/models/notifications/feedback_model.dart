@@ -5,22 +5,25 @@ part 'feedback_model.g.dart';
 @HiveType(typeId: 6)
 class Feedback {
   @HiveField(0)
-  final String id; // Unique feedback ID.
+  final String id;
 
   @HiveField(1)
-  final String studentId; // ID of the student giving feedback.
+  final String studentId;
 
   @HiveField(2)
-  final String unitId; // ID of the unit related to the feedback.
+  final String unitId;
 
   @HiveField(3)
-  final String lecturerId; // ID of the lecturer related to the feedback.
+  final String lecturerId;
 
   @HiveField(4)
-  final String feedbackText; // The feedback text provided by the student.
+  final String feedbackText;
 
   @HiveField(5)
-  final DateTime timestamp; // Time when the feedback was submitted.
+  final DateTime timestamp; // Submission time.
+
+  @HiveField(6)
+  final DateTime? updatedAt; // Nullable field for last update time.
 
   Feedback({
     required this.id,
@@ -29,6 +32,7 @@ class Feedback {
     required this.lecturerId,
     required this.feedbackText,
     required this.timestamp,
+    this.updatedAt,
   });
 
   // Serialization
@@ -40,6 +44,7 @@ class Feedback {
       'lecturerId': lecturerId,
       'feedbackText': feedbackText,
       'timestamp': timestamp.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 
@@ -51,6 +56,7 @@ class Feedback {
       lecturerId: map['lecturerId'],
       feedbackText: map['feedbackText'],
       timestamp: DateTime.parse(map['timestamp']),
+      updatedAt: map['updatedAt'] != null ? DateTime.parse(map['updatedAt']) : null,
     );
   }
 }

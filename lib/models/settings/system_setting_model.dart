@@ -5,22 +5,30 @@ part 'system_settings_model.g.dart';
 @HiveType(typeId: 8)
 class SystemSetting {
   @HiveField(0)
-  final String id; // Unique setting ID.
+  final String id;
 
   @HiveField(1)
-  final String name; // Name of the setting (e.g., "AttendanceThreshold").
+  final String name;
 
   @HiveField(2)
-  final String value; // Value of the setting (e.g., "30" for 30 minutes).
+  final String value;
 
   @HiveField(3)
-  final String description; // Description of what the setting does.
+  final String description;
+
+  @HiveField(4)
+  final DateTime createdAt; // When the setting was created.
+
+  @HiveField(5)
+  final DateTime updatedAt; // When the setting was last updated.
 
   SystemSetting({
     required this.id,
     required this.name,
     required this.value,
     required this.description,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   // Serialization
@@ -30,6 +38,8 @@ class SystemSetting {
       'name': name,
       'value': value,
       'description': description,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
     };
   }
 
@@ -39,6 +49,8 @@ class SystemSetting {
       name: map['name'],
       value: map['value'],
       description: map['description'],
+      createdAt: DateTime.parse(map['createdAt']),
+      updatedAt: DateTime.parse(map['updatedAt']),
     );
   }
 }

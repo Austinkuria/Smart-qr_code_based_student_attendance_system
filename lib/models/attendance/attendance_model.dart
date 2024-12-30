@@ -5,19 +5,25 @@ part 'attendance_model.g.dart';
 @HiveType(typeId: 5)
 class Attendance {
   @HiveField(0)
-  final String id; // Unique attendance ID.
+  final String id;
 
   @HiveField(1)
-  final String sessionId; // ID of the session.
+  final String sessionId;
 
   @HiveField(2)
-  final String studentId; // ID of the student.
+  final String studentId;
 
   @HiveField(3)
-  final DateTime timestamp; // Time when the attendance was marked.
+  final DateTime timestamp; 
 
   @HiveField(4)
-  final String status; // Attendance status (e.g., "On-time", "Late", "Absent").
+  final String status;
+
+  @HiveField(5)
+  final DateTime createdAt; // New: Time when the attendance was created.
+
+  @HiveField(6)
+  final DateTime updatedAt; // New: Time when the attendance was last updated.
 
   Attendance({
     required this.id,
@@ -25,9 +31,10 @@ class Attendance {
     required this.studentId,
     required this.timestamp,
     required this.status,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
-  // Serialization
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -35,6 +42,8 @@ class Attendance {
       'studentId': studentId,
       'timestamp': timestamp.toIso8601String(),
       'status': status,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
     };
   }
 
@@ -45,6 +54,8 @@ class Attendance {
       studentId: map['studentId'],
       timestamp: DateTime.parse(map['timestamp']),
       status: map['status'],
+      createdAt: DateTime.parse(map['createdAt']),
+      updatedAt: DateTime.parse(map['updatedAt']),
     );
   }
 }

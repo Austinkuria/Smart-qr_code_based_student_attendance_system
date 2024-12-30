@@ -19,12 +19,20 @@ class Admin {
   @HiveField(4)
   final String phoneNumber; // Contact number for admin.
 
+  @HiveField(5)
+  final DateTime createdAt; // Timestamp when the admin record was created.
+
+  @HiveField(6)
+  final DateTime updatedAt; // Timestamp when the admin record was last updated.
+
   Admin({
     required this.id,
     required this.name,
     required this.email,
     required this.password,
     required this.phoneNumber,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   // Serialization
@@ -35,6 +43,8 @@ class Admin {
       'email': email,
       'password': password,
       'phoneNumber': phoneNumber,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
     };
   }
 
@@ -45,6 +55,8 @@ class Admin {
       email: map['email'],
       password: map['password'],
       phoneNumber: map['phoneNumber'],
+      createdAt: DateTime.parse(map['createdAt']),
+      updatedAt: DateTime.parse(map['updatedAt']),
     );
   }
 }

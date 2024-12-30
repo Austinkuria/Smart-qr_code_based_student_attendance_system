@@ -1,23 +1,28 @@
 import 'package:hive/hive.dart';
 
 part 'audit_logs_model.g.dart';
-
 @HiveType(typeId: 7)
 class AuditLog {
   @HiveField(0)
-  final String id; // Unique log ID.
+  final String id;
 
   @HiveField(1)
-  final String userId; // ID of the user performing the action.
+  final String userId;
 
   @HiveField(2)
-  final String role; // Role of the user (e.g., "Admin", "Lecturer", "Student").
+  final String role;
 
   @HiveField(3)
-  final String action; // Description of the action performed.
+  final String action;
 
   @HiveField(4)
-  final DateTime timestamp; // Time when the action occurred.
+  final DateTime timestamp; // Already present.
+
+  @HiveField(5)
+  final DateTime createdAt; // New: Time when the log was created.
+
+  @HiveField(6)
+  final DateTime updatedAt; // New: Time when the log was last updated.
 
   AuditLog({
     required this.id,
@@ -25,9 +30,10 @@ class AuditLog {
     required this.role,
     required this.action,
     required this.timestamp,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
-  // Serialization
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -35,6 +41,8 @@ class AuditLog {
       'role': role,
       'action': action,
       'timestamp': timestamp.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
     };
   }
 
@@ -45,6 +53,8 @@ class AuditLog {
       role: map['role'],
       action: map['action'],
       timestamp: DateTime.parse(map['timestamp']),
+      createdAt: DateTime.parse(map['createdAt']),
+      updatedAt: DateTime.parse(map['updatedAt']),
     );
   }
 }

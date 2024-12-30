@@ -5,22 +5,28 @@ part 'session_model.g.dart';
 @HiveType(typeId: 4)
 class Session {
   @HiveField(0)
-  final String id; // Unique session ID.
+  final String id;
 
   @HiveField(1)
-  final String unitId; // ID of the unit the session belongs to.
+  final String unitId;
 
   @HiveField(2)
-  final String lecturerId; // ID of the lecturer conducting the session.
+  final String lecturerId;
 
   @HiveField(3)
-  final DateTime startTime; // Start time of the session.
+  final DateTime startTime;
 
   @HiveField(4)
-  final DateTime endTime; // End time of the session.
+  final DateTime endTime;
 
   @HiveField(5)
-  final String qrCodeData; // QR code data for the session.
+  final String qrCodeData;
+
+  @HiveField(6)
+  final DateTime createdAt; // New: Time when the session was created.
+
+  @HiveField(7)
+  final DateTime updatedAt; // New: Time when the session was last updated.
 
   Session({
     required this.id,
@@ -29,9 +35,10 @@ class Session {
     required this.startTime,
     required this.endTime,
     required this.qrCodeData,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
-  // Serialization
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -40,6 +47,8 @@ class Session {
       'startTime': startTime.toIso8601String(),
       'endTime': endTime.toIso8601String(),
       'qrCodeData': qrCodeData,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
     };
   }
 
@@ -51,6 +60,8 @@ class Session {
       startTime: DateTime.parse(map['startTime']),
       endTime: DateTime.parse(map['endTime']),
       qrCodeData: map['qrCodeData'],
+      createdAt: DateTime.parse(map['createdAt']),
+      updatedAt: DateTime.parse(map['updatedAt']),
     );
   }
 }
