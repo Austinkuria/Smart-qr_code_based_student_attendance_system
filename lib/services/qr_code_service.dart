@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import '../models/qr_code.dart'; 
+import '../models/qr_code_model.dart'; 
 import '../services/hive_service.dart'; // Import your Hive service for data persistence
 
 class QRCodeService {

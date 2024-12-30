@@ -1,12 +1,12 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import '../models/class.dart';
+import '../models/program_model.dart';
 import '../models/feedback.dart';
-import '../models/notification.dart';
-import '../models/session.dart';
-import '../models/qr_code.dart';
+import '../models/notifications_model.dart';
+import '../models/session_model.dart';
+import '../models/qr_code_model.dart';
 import '../models/system_setting.dart';
 import '../models/audit_log.dart';
-import '../models/attendance.dart';
+import '../models/attendance_model.dart';
 import '../models/user.dart';
 import '../utils/security_utils.dart'; // Import SecurityUtils
 

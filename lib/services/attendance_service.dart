@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import '../models/attendance.dart';
+import '../models/attendance_model.dart';
 import 'package:logger/logger.dart';
 
 class AttendanceService {

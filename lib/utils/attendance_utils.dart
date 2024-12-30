@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 import '../services/hive_service.dart';
-import '../models/attendance.dart';
+import '../models/attendance_model.dart';
 
 
 class AttendanceUtils {

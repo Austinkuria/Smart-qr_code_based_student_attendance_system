@@ -1,5 +1,5 @@
 import '../services/hive_service.dart';
-import '../models/class.dart';
+import '../models/program_model.dart';
 
 class ClassService {
   static Future<void> addClass(Class newClass) async {

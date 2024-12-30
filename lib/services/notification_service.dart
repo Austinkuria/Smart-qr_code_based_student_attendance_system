@@ -1,5 +1,5 @@
 import '../services/hive_service.dart';
-import '../models/notification.dart';
+import '../models/notifications_model.dart';
 
 class NotificationService {
   static Future<void> addNotification(Notification notification) async {

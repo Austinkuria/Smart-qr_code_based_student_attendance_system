@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/qr_code_service.dart';
 import 'package:logger/logger.dart';
-import '../../models/qr_code.dart';
+import '../../models/qr_code_model.dart';
 
 class GenerateQRCodeScreen extends StatefulWidget {
   const GenerateQRCodeScreen({super.key});
