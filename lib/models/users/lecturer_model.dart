@@ -1,32 +1,36 @@
 import 'package:hive/hive.dart';
 
-part 'lecturer_model.g.dart';
+part 'admin_model.g.dart';
 
-@HiveType(typeId: 1)
-class Lecturer {
+@HiveType(typeId: 9)
+class Admin {
   @HiveField(0)
-  final String id; // Unique identifier for the lecturer.
+  final String id; // Unique admin ID.
 
   @HiveField(1)
-  final String name; // Full name of the lecturer.
+  final String name; // Admin's name.
 
   @HiveField(2)
-  final String email; // Email address for lecturer communication.
+  final String email; // Admin's email address.
 
   @HiveField(3)
-  final List<String> assignedUnitIds; // List of unit IDs the lecturer is assigned to.
+  final String password; // Admin's hashed password.
 
   @HiveField(4)
-  final DateTime createdAt; // Timestamp when the lecturer record was created.
+  final String phoneNumber; // Contact number for admin.
 
   @HiveField(5)
-  final DateTime updatedAt; // Timestamp when the lecturer record was last updated.
+  final DateTime createdAt; // Timestamp when the admin record was created.
 
-  Lecturer({
+  @HiveField(6)
+  final DateTime updatedAt; // Timestamp when the admin record was last updated.
+
+  Admin({
     required this.id,
     required this.name,
     required this.email,
-    required this.assignedUnitIds,
+    required this.password,
+    required this.phoneNumber,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -37,18 +41,20 @@ class Lecturer {
       'id': id,
       'name': name,
       'email': email,
-      'assignedUnitIds': assignedUnitIds,
+      'password': password,
+      'phoneNumber': phoneNumber,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
     };
   }
 
-  factory Lecturer.fromMap(Map<String, dynamic> map) {
-    return Lecturer(
+  factory Admin.fromMap(Map<String, dynamic> map) {
+    return Admin(
       id: map['id'],
       name: map['name'],
       email: map['email'],
-      assignedUnitIds: List<String>.from(map['assignedUnitIds']),
+      password: map['password'],
+      phoneNumber: map['phoneNumber'],
       createdAt: DateTime.parse(map['createdAt']),
       updatedAt: DateTime.parse(map['updatedAt']),
     );

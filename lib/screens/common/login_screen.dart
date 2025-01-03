@@ -1,6 +1,7 @@
+// screens/common/login_screen.dart
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../../services/user_service.dart'; 
+import '../../services/authentication_service.dart'; 
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,7 +13,11 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  final UserService _userService = UserService(); 
+  final AuthenticationService _authenticationService = AuthenticationService(
+    Hive.box('students'), 
+    Hive.box('lecturers'), 
+    Hive.box('admins')
+  );
 
   @override
   void dispose() {
@@ -25,32 +30,22 @@ class _LoginScreenState extends State<LoginScreen> {
     String username = _usernameController.text.trim();
     String password = _passwordController.text.trim();
 
-    // Authenticate user
-    bool isAuthenticated = await _userService.authenticateUser(username, password);
-
-    if (!mounted) return; // Ensure widget is mounted before using context
-
-    if (isAuthenticated) {
-      // After successful authentication, store the role
-      var user = await UserService.getUser(username); // Assuming getUser fetches user data
-      if (user != null) {
-        var box = await Hive.openBox('userData');
-        await box.put('role', user.role); // Store role after successful login
-      }
-      // Navigate based on the stored role
-      _navigateBasedOnRole();
-    } else {
-      // Handle authentication error
-      _showError('Incorrect username or password');
+    try {
+      // Assuming role is passed and selected during login
+      var result = await _authenticationService.login(
+        identifier: username,
+        password: password,
+        role: 'student', // Change to dynamic based on the login role
+      );
+      var box = await Hive.openBox('userData');
+      await box.put('role', result['role']); // Store role after successful login
+      _navigateBasedOnRole(result['role']);
+    } catch (e) {
+      _showError('Login failed: ${e.toString()}');
     }
   }
 
-  Future<void> _navigateBasedOnRole() async {
-    var box = await Hive.openBox('userData');
-    String role = box.get('role', defaultValue: 'lecturer'); // Default role if none is found
-
-    // Navigate based on role
-    if (!mounted) return; // Ensure widget is mounted before using context
+  Future<void> _navigateBasedOnRole(String role) async {
     if (role == 'admin') {
       Navigator.pushReplacementNamed(context, '/dashboard_admin');
     } else if (role == 'lecturer') {
@@ -93,21 +88,13 @@ class _LoginScreenState extends State<LoginScreen> {
             TextField(
               controller: _passwordController,
               decoration: const InputDecoration(labelText: 'Password'),
-                obscureText: true,
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 20.0),
+              obscureText: true,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 20.0),
             ),
             ElevatedButton(
               onPressed: _login, // Login when button is pressed
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 32.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-              ),
               child: const Text('Login'),
             ),
           ],

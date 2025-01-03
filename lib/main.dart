@@ -1,26 +1,28 @@
+// main.dart
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'services/hive_service.dart'; // Import HiveService
+import 'services/hive_service.dart';
 import 'app_routes.dart';
-import 'screens/common/splash_screen.dart'; // Import SplashScreen
+import 'screens/common/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Hive and register adapters
+  // Initialize Firebase
+  await Firebase.initializeApp();
+
+  // Initialize Hive
   await Hive.initFlutter();
   await HiveService.initializeHive();
   await HiveService().initializeUsers();
-  await Hive.openBox('userData'); // Open the box
+  await Hive.openBox('userData'); // Open the box for user data
 
-  // Run the app after initializing
-  runApp(const MyApp(role: 'user')); // Provide the required 'role' argument
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final String role;
-
-  const MyApp({super.key, required this.role});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +32,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       onGenerateRoute: (RouteSettings settings) {
-        return AppRoutes.generateRoute(settings); // Handle role-based routing in AppRoutes
+        return AppRoutes.generateRoute(settings);
       },
-      home: const SplashScreen(), // Start with SplashScreen
+      home: const SplashScreen(),
     );
   }
 }

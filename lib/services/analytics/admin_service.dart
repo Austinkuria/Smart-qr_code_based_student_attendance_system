@@ -1,6 +1,5 @@
 import '../models/attendance/attendance_model.dart';
 
-
 class AnalyticsService {
   // Calculate attendance rate based on attendance records
   double calculateAttendanceRate(List<AttendanceRecord> records) {
